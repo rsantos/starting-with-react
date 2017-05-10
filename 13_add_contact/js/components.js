@@ -71,6 +71,49 @@ var Button = React.createClass({
 var Form = React.createClass({
     displayName: "Form",
 
+    getInitialState: function () {
+        return {
+            name: '',
+            email: '',
+            subject: 'R',
+            message: ''
+        };
+    },
+
+    handleNameChange: function (e) {
+        this.setState({ name: e.target.value });
+    },
+
+    handleEmailChange: function (e) {
+        this.setState({ email: e.target.value });
+    },
+
+    handleSubjectChange: function (e) {
+        this.setState({ subject: e.target.value });
+    },
+
+    handleMessageChange: function (e) {
+        this.setState({ message: e.target.value });
+    },
+
+    handleSubmit: function (e) {
+        e.preventDefault();
+        var name = this.state.name.trim();
+        var email = this.state.email.trim();
+        var subject = this.state.subject;
+        var message = this.state.message.trim();
+        if (!name || !email || !subject || !message) {
+            return;
+        }
+        this.props.onContactSubmit({
+            id: this.props.idNumber,
+            name: name,
+            email: email,
+            subject: subject,
+            message: message
+        });
+    },
+
     render: function () {
         var InputStyle = {
             padding: "20px",
@@ -79,7 +122,7 @@ var Form = React.createClass({
         };
         return React.createElement(
             "form",
-            null,
+            { onSubmit: this.handleSubmit },
             React.createElement(
                 "div",
                 { className: "form-group" },
@@ -88,7 +131,7 @@ var Form = React.createClass({
                     { htmlFor: "name" },
                     "Name"
                 ),
-                React.createElement("input", { type: "text", className: "form-control", id: "name", name: "name", style: InputStyle, placeholder: "Name" })
+                React.createElement("input", { type: "text", className: "form-control", id: "name", name: "name", style: InputStyle, placeholder: "Name", onChange: this.handleNameChange })
             ),
             React.createElement(
                 "div",
@@ -98,7 +141,7 @@ var Form = React.createClass({
                     { htmlFor: "email" },
                     "Email"
                 ),
-                React.createElement("input", { type: "email", className: "form-control", id: "email", name: "email", style: InputStyle, placeholder: "Email" })
+                React.createElement("input", { type: "email", className: "form-control", id: "email", name: "email", style: InputStyle, placeholder: "Email", onChange: this.handleEmailChange })
             ),
             React.createElement(
                 "div",
@@ -110,7 +153,7 @@ var Form = React.createClass({
                 ),
                 React.createElement(
                     "select",
-                    { defaultValue: "R", name: "subject", id: "subject", className: "form-control" },
+                    { defaultValue: this.state.subject, name: "subject", id: "subject", className: "form-control", onChange: this.handleSubjectChange },
                     React.createElement(
                         "option",
                         { value: "A" },
@@ -136,7 +179,12 @@ var Form = React.createClass({
                     { htmlFor: "message" },
                     "Message"
                 ),
-                React.createElement("textarea", { name: "message", id: "message", rows: "3", style: InputStyle, className: "form-control" })
+                React.createElement("textarea", { name: "message", id: "message", rows: "3", style: InputStyle, className: "form-control", onChange: this.handleMessageChange })
+            ),
+            React.createElement(
+                Button,
+                { textActive: "Loading..." },
+                "Send"
             )
         );
     }
